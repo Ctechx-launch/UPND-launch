@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>UPND Connect — Zambia 2026 Digital Mobilization Platform</title>
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+<style>
+  :root{
+    --bg:#0d0d10; --card:#191920; --card2:#1d1419; --redDark:#3a0f17; --red:#d11a2d; --redBright:#ef2640;
+    --gold:#e7b549; --white:#ffffff; --muted:#9a9aa5; --line:#2a2a33; --green:#2bb673; --textSoft:#c8c8ce;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Calibri,Arial,sans-serif;background:var(--bg);color:var(--white);}
+  a{color:inherit;text-decoration:none;}
+  #root{min-height:100vh;}
+  .app{display:flex;min-height:100vh;}
+
+  /* Sidebar */
+  .sidebar{width:248px;flex-shrink:0;background:#111114;border-right:1px solid var(--line);padding:20px 14px;display:flex;flex-direction:column;}
+  .brand{display:flex;align-items:center;gap:10px;padding:6px 6px 18px;border-bottom:1px solid var(--line);margin-bottom:14px;}
+  .brand-badge{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--red),var(--redDark));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;}
+  .brand-name{font-weight:800;font-size:15px;letter-spacing:0.5px;}
+  .brand-name span{color:var(--gold);}
+  .nav-section-label{font-size:10.5px;color:var(--muted);letter-spacing:1.2px;margin:14px 8px 6px;text-transform:uppercase;}
+  .nav-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;color:var(--textSoft);font-size:13.5px;margin-bottom:2px;border-left:3px solid transparent;}
+  .nav-item:hover{background:#1b1b21;}
+  .nav-item.active{background:linear-gradient(90deg,rgba(209,26,45,0.18),transparent);color:#fff;border-left:3px solid var(--red);font-weight:600;}
+  .nav-icon{width:18px;text-align:center;font-size:14px;}
+  .sidebar-foot{margin-top:auto;padding-top:14px;border-top:1px solid var(--line);font-size:11px;color:var(--muted);}
+
+  /* Main */
+  .main{flex:1;padding:28px 36px;max-width:100%;overflow-x:hidden;}
+  .page-header{margin-bottom:22px;}
+  .kicker{color:var(--gold);font-size:11.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;display:flex;align-items:center;gap:8px;}
+  .kicker::before{content:'';width:5px;height:16px;background:var(--red);display:inline-block;border-radius:2px;}
+  .page-title{font-size:25px;font-weight:800;margin:6px 0 2px;}
+  .page-sub{color:var(--muted);font-size:13.5px;}
+
+  .grid{display:grid;gap:14px;}
+  .grid-4{grid-template-columns:repeat(4,1fr);}
+  .grid-3{grid-template-columns:repeat(3,1fr);}
+  .grid-2{grid-template-columns:repeat(2,1fr);}
+  @media (max-width:1100px){.grid-4{grid-template-columns:repeat(2,1fr);} .grid-3{grid-template-columns:repeat(2,1fr);}}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px;}
+  .card-accent{background:linear-gradient(160deg,var(--card2),var(--card));border:1px solid #4a1620;}
+  .stat-num{font-size:28px;font-weight:800;color:var(--gold);}
+  .stat-label{font-size:12.5px;color:var(--textSoft);margin-top:2px;font-weight:600;}
+  .stat-tag{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:700;padding:3px 8px;border-radius:20px;background:rgba(43,182,115,0.15);color:var(--green);}
+
+  .btn{background:var(--red);color:#fff;border:none;padding:10px 16px;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;}
+  .btn:hover{background:var(--redBright);}
+  .btn-ghost{background:#23232b;color:#fff;border:1px solid var(--line);}
+  .btn-ghost:hover{background:#2a2a33;}
+  .btn-sm{padding:6px 11px;font-size:12px;border-radius:6px;}
+  .btn:disabled{opacity:0.45;cursor:not-allowed;}
+
+  input,textarea,select{background:#131316;border:1px solid var(--line);color:#fff;border-radius:8px;padding:9px 11px;font-size:13px;width:100%;font-family:inherit;}
+  input::placeholder,textarea::placeholder{color:#6b6b76;}
+  label{font-size:11.5px;color:var(--muted);font-weight:700;letter-spacing:0.5px;text-transform:uppercase;display:block;margin-bottom:5px;}
+
+  .row{display:flex;gap:10px;}
+  .badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:10.5px;font-weight:700;letter-spacing:0.3px;}
+  .badge-pending{background:rgba(231,181,73,0.15);color:var(--gold);}
+  .badge-approved{background:rgba(43,182,115,0.15);color:var(--green);}
+  .badge-rejected{background:rgba(209,26,45,0.18);color:#ff6b7a;}
+  .badge-confirmed{background:rgba(43,182,115,0.12);color:var(--green);}
+  .badge-placeholder{background:#26262e;color:var(--muted);}
+
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  th{text-align:left;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:0.6px;padding:8px 10px;border-bottom:1px solid var(--line);}
+  td{padding:9px 10px;border-bottom:1px solid #1f1f26;color:var(--textSoft);}
+  tr:hover td{background:#15151a;}
+
+  .tabs{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap;}
+  .tab{padding:8px 14px;border-radius:8px;background:#16161c;color:var(--muted);font-size:12.5px;font-weight:700;cursor:pointer;border:1px solid var(--line);}
+  .tab.active{background:var(--red);color:#fff;border-color:var(--red);}
+
+  .progress-bar{height:8px;background:#23232b;border-radius:5px;overflow:hidden;}
+  .progress-fill{height:100%;background:linear-gradient(90deg,var(--red),var(--gold));}
+
+  .empty{padding:50px 20px;text-align:center;color:var(--muted);}
+  .scroll-box{max-height:380px;overflow-y:auto;}
+  .footnote{font-size:11.5px;color:var(--muted);font-style:italic;margin-top:10px;}
+  .divider{height:1px;background:var(--line);margin:18px 0;}
+  .pill-row{display:flex;flex-wrap:wrap;gap:8px;}
+  .pill{background:#16161c;border:1px solid var(--line);border-radius:8px;padding:8px 12px;font-size:12.5px;display:flex;justify-content:space-between;gap:10px;cursor:pointer;}
+  .pill:hover{border-color:var(--red);}
+  .toast{position:fixed;bottom:24px;right:24px;background:var(--card);border:1px solid var(--green);color:#fff;padding:12px 18px;border-radius:10px;font-size:13px;z-index:999;box-shadow:0 8px 24px rgba(0,0,0,0.4);}
+  .icon-circle{width:42px;height:42px;border-radius:50%;background:var(--redDark);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+  .flexbetween{display:flex;justify-content:space-between;align-items:center;}
+  .mono{font-family:'SF Mono',Consolas,monospace;}
+  ::-webkit-scrollbar{width:9px;height:9px;}
+  ::-webkit-scrollbar-thumb{background:#2a2a33;border-radius:6px;}
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel" data-presets="react">
+const { useState, useEffect, useMemo, useCallback } = React;
+
+/* =========================================================================
+   ZAMBIA LOCATION DATA
+   - Constituency names below are the REAL, currently-gazetted names sourced
+     from the National Assembly of Zambia (156 constituencies under the
+     pre-2025-delimitation structure).
+   - In April 2026 the ECZ created 70 additional constituencies across all
+     10 provinces (156 -> 226) ahead of the 2026 general election. Their
+     specific names/boundaries are pending full gazette publication, so they
+     are represented here as clearly-labelled placeholders, NOT invented
+     names, until the official list can be synced.
+   - Ward and polling-station NAMES are not embedded as real data (the full
+     official register is a very large ECZ dataset). Instead this app
+     generates the CORRECT TOTAL COUNTS (1,858 wards / 13,529 polling
+     stations) as clearly-labelled placeholder structure, and includes a
+     Data Import tool so a real ECZ register export can be loaded to
+     replace the placeholders with authoritative data.
+   ========================================================================= */
+
+const REAL_CONSTITUENCIES = {
+  "Central": ["Bwacha","Chisamba","Chitambo","Itezhi-Tezhi","Kabwe Central","Kapiri Mposhi","Katuba","Keembe","Lufubu","Mkushi North","Mkushi South","Muchinga","Mumbwa","Mwembeshi","Nangoma","Serenje"],
+  "Copperbelt": ["Bwana Mkubwa","Chifubu","Chililabombwe","Chimwemwe","Chingola","Kabushi","Kafulafuta","Kalulushi","Kamfinsa","Kankoyo","Kantanshi","Kwacha","Luanshya","Lufwanyama","Masaiti","Mpongwe","Mufulira","Nchanga","Ndola Central","Nkana","Roan","Wusakile"],
+  "Eastern": ["Chadiza","Chasefu","Chipangali","Chipata Central","Kapoche","Kasenengwa","Kaumbwe","Luangeni","Lumezi","Lundazi","Malambo","Milanzi","Mkaika","Msanzala","Nyimba","Petauke Central","Sinda","Vubwi"],
+  "Luapula": ["Bahati","Bangweulu","Chembe","Chienge","Chifunabuli","Chipili","Kawambwa","Luapula","Mambilima","Mansa Central","Milenge","Mwansabombwe","Mwense","Nchelenge","Pambashe"],
+  "Lusaka": ["Chawama","Chilanga","Chirundu","Chongwe","Feira","Kabwata","Kafue","Kanyama","Lusaka Central","Mandevu","Matero","Munali","Rufunsa"],
+  "Muchinga": ["Chama North","Chama South","Chinsali","Isoka","Kanchibiya","Mafinga","Mfuwe","Mpika","Nakonde","Shiwa Ng'andu"],
+  "Northern": ["Chilubi","Chimbamilonga","Kaputa","Kasama","Lubansenshi","Lukashya","Lunte","Lupososhi","Malole","Mbala","Mporokoso","Mpulungu","Senga Hill"],
+  "North-Western": ["Chavuma","Ikeleng'i","Kabompo","Kasempa","Manyinga","Mufumbwe","Mwinilunga","Solwezi Central","Solwezi East","Solwezi West","Zambezi East","Zambezi West"],
+  "Southern": ["Bweengwa","Chikankata","Choma","Dundumwenzi","Gwembe","Kalomo Central","Katombola","Livingstone","Magoye","Mapatizya","Mazabuka Central","Mbabala","Monze","Moomba","Namwala","Pemba","Siavonga","Sinazongwe"],
+  "Western": ["Kalabo Central","Kaoma","Liuwa","Luampa","Luena","Lukulu East","Mangango","Mitete","Mongu Central","Mulobezi","Mwandi","Nalikwanda","Nalolo","Nkeyema","Senanga","Sesheke","Shang'ombo","Sikongo","Sioma"]
+};
+// Official 2026 totals per province after the April-2026 delimitation (156 -> 226)
+const PROVINCE_TARGET_TOTAL = {
+  "Central":23,"Copperbelt":29,"Eastern":29,"Luapula":20,"Lusaka":18,
+  "Muchinga":14,"Northern":19,"North-Western":19,"Southern":29,"Western":26
+};
+const TOTAL_WARDS = 1858;
+const TOTAL_POLLING_STATIONS = 13529;
+const TOTAL_REGISTERED_VOTERS = 8800000;
+const PROVINCE_CODE = {
+  "Central":"CEN","Copperbelt":"CBT","Eastern":"EAS","Luapula":"LUA","Lusaka":"LSK",
+  "Muchinga":"MUC","Northern":"NOR","North-Western":"NWP","Southern":"SOU","Western":"WES"
+};
+
+function buildLocations(){
+  const provinces = [];
+  let flatConstituencies = [];
+  Object.keys(REAL_CONSTITUENCIES).forEach((prov)=>{
+    const real = REAL_CONSTITUENCIES[prov];
+    const target = PROVINCE_TARGET_TOTAL[prov];
+    const pendingCount = Math.max(0, target - real.length);
+    const code = PROVINCE_CODE[prov];
+    const constituencies = real.map((name,i)=>({
+      id: code+"-C"+(i+1), name, province: prov, status:"confirmed"
+    }));
+    for(let i=0;i<pendingCount;i++){
+      constituencies.push({
+        id: code+"-CP"+(i+1),
+        name: "New Constituency #"+(i+1)+" (Pending Gazette)",
+        province: prov, status:"pending"
+      });
+    }
+    provinces.push({ name: prov, constituencies });
+    flatConstituencies = flatConstituencies.concat(constituencies);
+  });
+
+  // Distribute ward counts across all 226 constituencies to total exactly 1,858
+  const n = flatConstituencies.length;
+  const baseWards = Math.floor(TOTAL_WARDS / n);
+  let remainderWards = TOTAL_WARDS - baseWards * n;
+  flatConstituencies.forEach((c, idx)=>{
+    c.wardCount = baseWards + (idx < remainderWards ? 1 : 0);
+  });
+
+  // Build ward objects, then distribute polling-station counts across all wards to total exactly 13,529
+  let allWards = [];
+  flatConstituencies.forEach((c)=>{
+    c.wards = [];
+    for(let w=1; w<=c.wardCount; w++){
+      const ward = { id: c.id+"-W"+w, name:"Ward "+w, constituencyId:c.id, constituencyName:c.name, province:c.province };
+      c.wards.push(ward);
+      allWards.push(ward);
+    }
+  });
+  const m = allWards.length;
+  const baseStations = Math.floor(TOTAL_POLLING_STATIONS / m);
+  let remainderStations = TOTAL_POLLING_STATIONS - baseStations * m;
+  allWards.forEach((w, idx)=>{
+    w.stationCount = baseStations + (idx < remainderStations ? 1 : 0);
+  });
+
+  return { provinces, flatConstituencies, allWards };
+}
+function getStationsForWard(ward){
+  return Array.from({length: ward.stationCount}, (_,i)=>({
+    id: ward.id+"-PS"+(i+1), name:"Polling Station "+(i+1), wardId: ward.id
+  }));
+}
+
+/* ============================= STORAGE HELPERS ========================== */
+async function loadKey(key, fallback){
+  try{
+    const r = await window.storage.get(key, true);
+    return r && r.value ? JSON.parse(r.value) : fallback;
+  }catch(e){ return fallback; }
+}
+async function saveKey(key, value){
+  try{ await window.storage.set(key, JSON.stringify(value), true); }catch(e){ console.error("storage save failed", e); }
+}
+
+/* ============================= SEED DATA ================================ */
+const SEED_TASKS = [
+  { id:"t1", title:"Door-to-door canvass — Kabwata Ward 3", desc:"Visit registered households, confirm voter cards, leave manifesto leaflet.", location:"Kabwata, Lusaka", points:50, status:"open" },
+  { id:"t2", title:"Voter roll verification — Matero", desc:"Cross-check the displayed provisional register against ward membership list.", location:"Matero, Lusaka", points:40, status:"open" },
+  { id:"t3", title:"Rally turnout mobilisation — Kabwe Central", desc:"Coordinate transport & turnout for Saturday's provincial rally.", location:"Kabwe Central, Central", points:60, status:"open" },
+  { id:"t4", title:"Agent briefing attendance — Chingola", desc:"Attend the polling-agent briefing session at the constituency office.", location:"Chingola, Copperbelt", points:30, status:"done" }
+];
+const SEED_INITIATIVES = [
+  { id:"i1", name:"Youth Skills & Trades Empowerment", desc:"Vocational training drive for first-time-voter youth across Copperbelt wards.", beneficiaries:0, status:"Active Stage", funding:480000 },
+  { id:"i2", name:"Women in Enterprise — Eastern Province", desc:"Micro-grant and mentorship pipeline for women-led businesses.", beneficiaries:0, status:"Active Stage", funding:260000 }
+];
+const SEED_APPLICATIONS = [
+  { id:"a1", name:"Mwila Chanda", role:"Polling Agent", constituency:"Kabwata", ward:"Ward 2", status:"pending" },
+  { id:"a2", name:"Natasha Mwape", role:"Ward Coordinator", constituency:"Matero", ward:"Ward 5", status:"pending" },
+  { id:"a3", name:"Joseph Banda", role:"Polling Agent", constituency:"Chingola", ward:"Ward 1", status:"approved" },
+  { id:"a4", name:"Ireen Sakala", role:"Constituency Official", constituency:"Kabwe Central", ward:"Ward 3", status:"approved" },
+  { id:"a5", name:"Davy Mulenga", role:"Polling Agent", constituency:"Livingstone", ward:"Ward 4", status:"pending" },
+  { id:"a6", name:"Patricia Lungu", role:"Polling Agent", constituency:"Solwezi Central", ward:"Ward 2", status:"rejected" },
+  { id:"a7", name:"Brian Mwansa", role:"Ward Coordinator", constituency:"Mansa Central", ward:"Ward 1", status:"pending" },
+  { id:"a8", name:"Grace Tembo", role:"Polling Agent", constituency:"Mongu Central", ward:"Ward 6", status:"approved" }
+];
+const SEED_PETITIONS = [
+  { id:"p1", title:"Fix the Kafue feeder road before the rains", objective:"Request urgent grading of the Kafue–Shimabala feeder road ahead of the campaign season.", signatures:6240, threshold:10000 },
+  { id:"p2", title:"More boreholes for Mongu rural wards", objective:"Petition for additional community boreholes across Mongu Central's rural wards.", signatures:11320, threshold:10000 }
+];
+const SEED_SIGNALS = [
+  { id:"s1", subject:"Generator needed at Mansa Central briefing venue", category:"Logistics", location:"Mansa Central, Luapula", status:"Submitted", upvotes:4 },
+  { id:"s2", subject:"Reports of intimidation near Chililabombwe market", category:"Security", location:"Chililabombwe, Copperbelt", status:"Escalated", upvotes:17 },
+  { id:"s3", subject:"Bridge access issue limiting canvass route", category:"Infrastructure", location:"Lukulu East, Western", status:"Under Review", upvotes:9 }
+];
+const SEED_DEPLOYMENTS = [
+  { id:"d1", title:"Provincial Rally — Ndola Central", type:"Rally", location:"Ndola Central, Copperbelt", date:"2026-07-02" },
+  { id:"d2", title:"Polling Agent Deployment Briefing", type:"Agent Deployment", location:"Lusaka Central, Lusaka", date:"2026-08-10" }
+];
+
+/* ============================= SMALL UI HELPERS ========================== */
+function StatCard({num,label,tag}){
+  return (
+    <div className="card">
+      <div className="flexbetween" style={{marginBottom:8}}>
+        <div className="stat-num">{num}</div>
+        {tag && <span className="stat-tag">{tag}</span>}
+      </div>
+      <div className="stat-label">{label}</div>
+    </div>
+  );
+}
+function Toast({msg,onClose}){
+  useEffect(()=>{ const t=setTimeout(onClose,2600); return ()=>clearTimeout(t); },[]);
+  return <div className="toast">✓ {msg}</div>;
+}
+function Badge({status}){
+  const map = {
+    pending:["Pending","badge-pending"], approved:["Approved","badge-approved"], rejected:["Rejected","badge-rejected"],
+    confirmed:["Confirmed","badge-confirmed"], placeholder:["Placeholder","badge-placeholder"],
+    open:["Open","badge-pending"], done:["Done","badge-approved"],
+    Submitted:["Submitted","badge-pending"], "Under Review":["Under Review","badge-pending"], Escalated:["Escalated","badge-rejected"], Resolved:["Resolved","badge-approved"]
+  };
+  const [label,cls] = map[status] || [status,"badge-placeholder"];
+  return <span className={"badge "+cls}>{label}</span>;
+}
+
+/* ============================= PAGES ===================================== */
+function Dashboard({ counts, wallet, onAddMoney, onTakeOut }){
+  return (
+    <div>
+      <div className="page-header">
+        <div className="kicker">Command Dashboard</div>
+        <div className="page-title">Hello, Delegate</div>
+        <div className="page-sub">Real-time visibility across your constituency, today.</div>
+      </div>
+
+      <div className="grid grid-3" style={{marginBottom:14}}>
+        <div className="card card-accent">
+          <div className="kicker" style={{marginBottom:10}}>💳 My Wallet</div>
+          <div style={{fontSize:30,fontWeight:800,marginBottom:14}}>ZMW {wallet.toLocaleString()}</div>
+          <div className="row">
+            <button className="btn btn-sm" onClick={onAddMoney}>+ Add Funds</button>
+            <button className="btn btn-ghost btn-sm" onClick={onTakeOut}>⇄ Withdraw</button>
+          </div>
+          <div className="footnote">Demo wallet — illustrative only, not connected to a real payment rail.</div>
+        </div>
+        <StatCard num={counts.openTasks} label="Open Field Tasks" tag="ACTION" />
+        <StatCard num={counts.activeInitiatives} label="Active Initiatives" tag="GROWTH" />
+      </div>
+
+      <div className="grid grid-3">
+        <StatCard num={counts.pendingApplications} label="Vetting — Pending Review" />
+        <StatCard num={counts.signalsOpen} label="Open Field Signals" />
+        <StatCard num={"226"} label="Constituencies Mapped" tag="LIVE" />
+      </div>
+
+      <div className="divider"></div>
+
+      <div className="grid grid-2">
+        <div className="card">
+          <div className="kicker" style={{marginBottom:10}}>🗳️ Election Countdown</div>
+          <div style={{fontSize:15,color:"#fff",fontWeight:700,marginBottom:6}}>Election Day: Thursday, 13 August 2026</div>
+          <div className="footnote" style={{marginTop:0}}>Campaign period 12 May – 12 August 2026 is underway.</div>
+        </div>
+        <div className="card">
+          <div className="kicker" style={{marginBottom:10}}>📍 National Scale</div>
+          <div style={{fontSize:13,color:"#c8c8ce",lineHeight:1.7}}>
+            10 provinces · 226 constituencies<br/>1,858 wards · 13,529 polling stations<br/>8.8M registered voters
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FieldOperations({ tasks, onComplete }){
+  const open = tasks.filter(t=>t.status==="open");
+  const done = tasks.filter(t=>t.status==="done");
+  const points = done.reduce((s,t)=>s+t.points,0);
+  return (
+    <div>
+      <div className="page-header flexbetween">
+        <div>
+          <div className="kicker">Field Operations</div>
+          <div className="page-title">Operations Board</div>
+          <div className="page-sub">Complete field tasks and daily assignments to earn civic points.</div>
+        </div>
+        <div className="card" style={{padding:"10px 16px"}}>
+          <div className="stat-label">EARNINGS</div>
+          <div className="stat-num" style={{fontSize:20}}>{points} pts</div>
+        </div>
+      </div>
+
+      {open.length===0 ? <div className="card empty">Zero active missions in your sector. Check back later for field assignments.</div> :
+        <div className="grid grid-2">
+          {open.map(t=>(
+            <div className="card" key={t.id}>
+              <div className="flexbetween" style={{marginBottom:6}}>
+                <div style={{fontWeight:700,fontSize:14}}>{t.title}</div>
+                <Badge status={t.status}/>
+              </div>
+              <div style={{fontSize:12.5,color:"var(--muted)",marginBottom:10}}>{t.desc}</div>
+              <div className="flexbetween">
+                <span style={{fontSize:12,color:"var(--gold)"}}>📍 {t.location} · {t.points} pts</span>
+                <button className="btn btn-sm" onClick={()=>onComplete(t.id)}>Mark Complete</button>
+              </div>
+            </div>
+          ))}
+        </div>
+      }
+
+      <div className="divider"></div>
+      <div className="card">
+        <div className="flexbetween" style={{marginBottom:10}}>
+          <div style={{fontWeight:700}}>⭐ Unlock Senior Contributor Status</div>
+          <span style={{color:"var(--gold)",fontSize:12.5,fontWeight:700}}>{done.length} / 50 tasks</span>
+        </div>
+        <div className="progress-bar"><div className="progress-fill" style={{width:Math.min(100,done.length/50*100)+"%"}}></div></div>
+        <div className="footnote">Complete 50 tasks to unlock higher-tier rewards and direct command-dashboard access.</div>
+      </div>
+    </div>
+  );
+}
+
+function Benefits({ initiatives, onPropose }){
+  const [form,setForm] = useState({name:"",desc:""});
+  const [showForm,setShowForm] = useState(false);
+  const totalFunding = initiatives.reduce((s,i)=>s+i.funding,0);
+  return (
+    <div>
+      <div className="page-header flexbetween">
+        <div>
+          <div className="kicker">Empowerment Initiatives</div>
+          <div className="page-title">Citizen Benefits</div>
+          <div className="page-sub">Track and participate in grassroots empowerment programmes.</div>
+        </div>
+        <button className="btn" onClick={()=>setShowForm(s=>!s)}>+ Propose Initiative</button>
+      </div>
+
+      {showForm && (
+        <div className="card" style={{marginBottom:16}}>
+          <label>Initiative name</label>
+          <input value={form.name} onChange={e=>setForm({...form,name:e.target.value})} placeholder="e.g. Solar Lamp Distribution — Mongu Wards"/>
+          <div style={{height:10}}></div>
+          <label>Description</label>
+          <textarea rows="2" value={form.desc} onChange={e=>setForm({...form,desc:e.target.value})} placeholder="What does this initiative deliver, and to whom?"/>
+          <div style={{height:12}}></div>
+          <button className="btn" onClick={()=>{ if(form.name.trim()){ onPropose(form); setForm({name:"",desc:""}); setShowForm(false);} }}>Submit for HQ Review</button>
+        </div>
+      )}
+
+      <div className="grid grid-4" style={{marginBottom:16}}>
+        <StatCard num={initiatives.reduce((s,i)=>s+i.beneficiaries,0)} label="Total Beneficiaries"/>
+        <StatCard num={initiatives.length} label="Programmes Available"/>
+        <StatCard num={initiatives.filter(i=>i.status==="Active Stage").length} label="Active Stage"/>
+        <StatCard num={"ZMW "+totalFunding.toLocaleString()} label="Funding Allocated"/>
+      </div>
+
+      <div className="grid grid-2">
+        {initiatives.map(i=>(
+          <div className="card" key={i.id}>
+            <div className="flexbetween" style={{marginBottom:6}}>
+              <div style={{fontWeight:700,color:"var(--gold)"}}>{i.name}</div>
+              <span className="badge badge-approved">Verified</span>
+            </div>
+            <div style={{fontSize:12.5,color:"var(--muted)",marginBottom:10}}>{i.desc}</div>
+            <div className="flexbetween" style={{fontSize:12}}>
+              <span>👥 {i.beneficiaries} citizens</span>
+              <span>{i.status}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function Donate({ donations, impact, onDonate }){
+  const [amount,setAmount] = useState(0);
+  const [message,setMessage] = useState("");
+  const presets = [500,1000,2500,5000,10000,25000];
+  return (
+    <div>
+      <div className="page-header">
+        <div className="kicker">Party Cause Fundraising</div>
+        <div className="page-title">Support the Movement</div>
+        <div className="page-sub">Transfer directly into the campaign treasury — every transfer is traceable and logged.</div>
+      </div>
+      <div className="grid grid-2">
+        <div className="card">
+          <div className="card-accent" style={{padding:14,borderRadius:10,marginBottom:14}}>
+            <div className="stat-label" style={{marginBottom:4}}>RECIPIENT</div>
+            <div style={{fontWeight:700}}>UPND Campaign Treasury Desk</div>
+            <div style={{fontSize:11.5,color:"var(--muted)"}}>treasury@upndconnect.demo · Traceable wallet transfer</div>
+          </div>
+          <label>Select amount (ZMW)</label>
+          <div className="grid grid-3" style={{marginBottom:10}}>
+            {presets.map(p=>(
+              <button key={p} className={"btn-ghost btn"} style={amount===p?{borderColor:"var(--red)",color:"var(--gold)"}:{}} onClick={()=>setAmount(p)}>ZMW {p.toLocaleString()}</button>
+            ))}
+          </div>
+          <label>Custom amount (ZMW)</label>
+          <input type="number" value={amount||""} onChange={e=>setAmount(Number(e.target.value))} placeholder="0.00"/>
+          <div style={{height:10}}></div>
+          <label>Message (optional)</label>
+          <textarea rows="2" value={message} onChange={e=>setMessage(e.target.value)} placeholder="A short message of support..."/>
+          <div style={{height:12}}></div>
+          <button className="btn" disabled={!amount} onClick={()=>{ onDonate(amount,message); setAmount(0); setMessage(""); }}>Confirm Donation</button>
+        </div>
+
+        <div>
+          <div className="card" style={{marginBottom:14}}>
+            <div className="kicker" style={{marginBottom:10}}>MOVEMENT IMPACT</div>
+            <div className="flexbetween" style={{padding:"8px 0",borderBottom:"1px solid var(--line)"}}><span>Citizens Empowered</span><b style={{color:"var(--gold)"}}>{impact.citizens.toLocaleString()}+</b></div>
+            <div className="flexbetween" style={{padding:"8px 0",borderBottom:"1px solid var(--line)"}}><span>Constituencies Reached</span><b style={{color:"var(--gold)"}}>{impact.constituencies} of 226</b></div>
+            <div className="flexbetween" style={{padding:"8px 0"}}><span>Initiatives Funded</span><b style={{color:"var(--gold)"}}>ZMW {impact.funded.toLocaleString()}+</b></div>
+          </div>
+          <div className="card">
+            <div className="kicker" style={{marginBottom:10}}>MY DONATIONS</div>
+            {donations.length===0 ? <div className="footnote">No donations yet.</div> :
+              <div className="scroll-box">
+                {donations.slice().reverse().map(d=>(
+                  <div key={d.id} className="flexbetween" style={{padding:"7px 0",borderBottom:"1px solid #1f1f26",fontSize:12.5}}>
+                    <span>{d.message? d.message.slice(0,28): "Donation"}</span>
+                    <b style={{color:"var(--gold)"}}>ZMW {d.amount.toLocaleString()}</b>
+                  </div>
+                ))}
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Vetting({ applications, onAdd, onSetStatus }){
+  const [tab,setTab] = useState("pending");
+  const [search,setSearch] = useState("");
+  const [showForm,setShowForm] = useState(false);
+  const [form,setForm] = useState({name:"",role:"Polling Agent",constituency:"",ward:""});
+  const counts = {
+    total: applications.length,
+    pending: applications.filter(a=>a.status==="pending").length,
+    approved: applications.filter(a=>a.status==="approved").length,
+    rejected: applications.filter(a=>a.status==="rejected").length
+  };
+  const filtered = applications.filter(a=>{
+    if(tab!=="all" && a.status!==tab) return false;
+    if(search && !(a.name+a.constituency+a.ward).toLowerCase().includes(search.toLowerCase())) return false;
+    return true;
+  });
+  return (
+    <div>
+      <div className="page-header flexbetween">
+        <div>
+          <div className="kicker">Delegate & Agent Vetting</div>
+          <div className="page-title">Clearance Management</div>
+          <div className="page-sub">{counts.pending} applications pending · {counts.approved} cleared</div>
+        </div>
+        <button className="btn" onClick={()=>setShowForm(s=>!s)}>+ New Application</button>
+      </div>
+
+      {showForm && (
+        <div className="card" style={{marginBottom:16}}>
+          <div className="grid grid-2">
+            <div><label>Full name</label><input value={form.name} onChange={e=>setForm({...form,name:e.target.value})}/></div>
+            <div><label>Role applied for</label>
+              <select value={form.role} onChange={e=>setForm({...form,role:e.target.value})}>
+                <option>Polling Agent</option><option>Ward Coordinator</option><option>Constituency Official</option>
+              </select>
+            </div>
+            <div><label>Constituency</label><input value={form.constituency} onChange={e=>setForm({...form,constituency:e.target.value})} placeholder="e.g. Kabwata"/></div>
+            <div><label>Ward</label><input value={form.ward} onChange={e=>setForm({...form,ward:e.target.value})} placeholder="e.g. Ward 2"/></div>
+          </div>
+          <div style={{height:12}}></div>
+          <button className="btn" onClick={()=>{ if(form.name.trim()){ onAdd(form); setForm({name:"",role:"Polling Agent",constituency:"",ward:""}); setShowForm(false);} }}>Submit for Clearance</button>
+        </div>
+      )}
+
+      <div className="grid grid-4" style={{marginBottom:16}}>
+        <StatCard num={counts.total} label="Total Applications"/>
+        <StatCard num={counts.pending} label="Pending Review"/>
+        <StatCard num={counts.approved} label="Approved Nodes"/>
+        <StatCard num={counts.rejected} label="Rejected"/>
+      </div>
+
+      <div className="tabs">
+        {["pending","approved","rejected","all"].map(t=>(
+          <div key={t} className={"tab"+(tab===t?" active":"")} onClick={()=>setTab(t)}>{t.toUpperCase()}</div>
+        ))}
+        <input style={{maxWidth:260,marginLeft:"auto"}} placeholder="Search name, constituency or ward..." value={search} onChange={e=>setSearch(e.target.value)}/>
+      </div>
+
+      <div className="card" style={{padding:0}}>
+        {filtered.length===0 ? <div className="empty">No applications matching this filter.</div> :
+          <table>
+            <thead><tr><th>Name</th><th>Role</th><th>Constituency / Ward</th><th>Status</th><th></th></tr></thead>
+            <tbody>
+              {filtered.map(a=>(
+                <tr key={a.id}>
+                  <td style={{color:"#fff",fontWeight:600}}>{a.name}</td>
+                  <td>{a.role}</td>
+                  <td>{a.constituency} · {a.ward}</td>
+                  <td><Badge status={a.status}/></td>
+                  <td>
+                    {a.status==="pending" && <span>
+                      <button className="btn btn-sm" style={{marginRight:6}} onClick={()=>onSetStatus(a.id,"approved")}>Approve</button>
+                      <button className="btn-ghost btn btn-sm" onClick={()=>onSetStatus(a.id,"rejected")}>Reject</button>
+                    </span>}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        }
+      </div>
+    </div>
+  );
+}
+
+function Petitions({ petitions, onSign, onCreate }){
+  const [showForm,setShowForm] = useState(false);
+  const [form,setForm] = useState({title:"",objective:""});
+  const [search,setSearch] = useState("");
+  const filtered = petitions.filter(p=>(p.title+p.objective).toLowerCase().includes(search.toLowerCase()));
+  return (
+    <div>
+      <div className="page-header flexbetween">
+        <div>
+          <div className="kicker">Grassroots Petitions</div>
+          <div className="page-title">Community Petitions</div>
+          <div className="page-sub">Direct democracy in action — propose and sign petitions on local issues.</div>
+        </div>
+        <button className="btn" onClick={()=>setShowForm(s=>!s)}>+ New Petition</button>
+      </div>
+
+      {showForm && (
+        <div className="card" style={{marginBottom:16}}>
+          <label>Title</label>
+          <input value={form.title} onChange={e=>setForm({...form,title:e.target.value})} placeholder="What needs to change?"/>
+          <div style={{height:10}}></div>
+          <label>Objective</label>
+          <textarea rows="2" value={form.objective} onChange={e=>setForm({...form,objective:e.target.value})} placeholder="What outcome are you petitioning for?"/>
+          <div style={{height:12}}></div>
+          <button className="btn" onClick={()=>{ if(form.title.trim()){ onCreate(form); setForm({title:"",objective:""}); setShowForm(false);} }}>Launch Petition</button>
+        </div>
+      )}
+
+      <input style={{marginBottom:16}} placeholder="Search by title or objective..." value={search} onChange={e=>setSearch(e.target.value)}/>
+
+      {filtered.length===0 ? <div className="card empty">No petitions matching your search.</div> :
+        <div className="grid grid-2">
+          {filtered.map(p=>{
+            const pct = Math.min(100, p.signatures/p.threshold*100);
+            return (
+              <div className="card" key={p.id}>
+                <div style={{fontWeight:700,marginBottom:6}}>{p.title}</div>
+                <div style={{fontSize:12.5,color:"var(--muted)",marginBottom:10}}>{p.objective}</div>
+                <div className="flexbetween" style={{fontSize:12,marginBottom:6}}>
+                  <span>{p.signatures.toLocaleString()} / {p.threshold.toLocaleString()} signatures</span>
+                  <span style={{color: pct>=100?"var(--green)":"var(--gold)"}}>{pct>=100?"Escalated to Ministry":"Collecting"}</span>
+                </div>
+                <div className="progress-bar" style={{marginBottom:12}}><div className="progress-fill" style={{width:pct+"%"}}></div></div>
+                <button className="btn btn-sm" onClick={()=>onSign(p.id)} disabled={pct>=100}>Sign Petition</button>
+              </div>
+            );
+          })}
+        </div>
+      }
+      <div className="footnote">Petitions that cross the 10,000-signature threshold are compiled into briefs for escalation to the relevant Government Ministry.</div>
+    </div>
+  );
+}
+
+function Signals({ signals, onSubmit, onUpvote, locationOptions }){
+  const [tab,setTab] = useState("All");
+  const [showForm,setShowForm] = useState(false);
+  const [form,setForm] = useState({subject:"",category:"Infrastructure",location:""});
+  const tabs = ["All","Submitted","Under Review","Escalated","Resolved"];
+  const filtered = signals.filter(s=> tab==="All" || s.status===tab);
+  return (
+    <div>
+      <div className="page-header flexbetween">
+        <div>
+          <div className="kicker">Field Intelligence</div>
+          <div className="page-title">Citizen Signals</div>
+          <div className="page-sub">{signals.length} signals submitted across the network</div>
+        </div>
+        <button className="btn" onClick={()=>setShowForm(s=>!s)}>+ Submit Signal</button>
+      </div>
+
+      {showForm && (
+        <div className="card" style={{marginBottom:16}}>
+          <div className="grid grid-2">
+            <div><label>Subject</label><input value={form.subject} onChange={e=>setForm({...form,subject:e.target.value})} placeholder="What's happening?"/></div>
+            <div><label>Category</label>
+              <select value={form.category} onChange={e=>setForm({...form,category:e.target.value})}>
+                <option>Infrastructure</option><option>Logistics</option><option>Security</option><option>Roads</option><option>Other</option>
+              </select>
+            </div>
+          </div>
+          <div style={{height:10}}></div>
+          <label>Location (constituency)</label>
+          <input list="loc-list" value={form.location} onChange={e=>setForm({...form,location:e.target.value})} placeholder="Start typing a constituency..."/>
+          <datalist id="loc-list">{locationOptions.map(l=><option key={l} value={l}/>)}</datalist>
+          <div style={{height:12}}></div>
+          <button className="btn" onClick={()=>{ if(form.subject.trim()){ onSubmit(form); setForm({subject:"",category:"Infrastructure",location:""}); setShowForm(false);} }}>Submit Signal</button>
+        </div>
+      )}
+
+      <div className="tabs">{tabs.map(t=><div key={t} className={"tab"+(tab===t?" active":"")} onClick={()=>setTab(t)}>{t.toUpperCase()}</div>)}</div>
+
+      {filtered.length===0 ? <div className="card empty">No signals matching this filter.</div> :
+        <div className="card" style={{padding:0}}>
+          <table>
+            <thead><tr><th>Signal</th><th>Category</th><th>Location</th><th>Status</th><th>Upvotes</th></tr></thead>
+            <tbody>
+              {filtered.map(s=>(
+                <tr key={s.id}>
+                  <td style={{color:"#fff"}}>{s.subject}</td>
+                  <td>{s.category}</td>
+                  <td>{s.location}</td>
+                  <td><Badge status={s.status}/></td>
+                  <td><button className="btn-ghost btn btn-sm" onClick={()=>onUpvote(s.id)}>▲ {s.upvotes}</button></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      }
+    </div>
+  );
+}
+
+function Deployments({ deployments, onCreate, locationOptions }){
+  const [showForm,setShowForm] = useState(false);
+  const [form,setForm] = useState({title:"",type:"Rally",location:"",date:""});
+  return (
+    <div>
+      <div className="page-header flexbetween">
+        <div>
+          <div className="kicker">Rally & Deployment Scheduling</div>
+          <div className="page-title">Operations & Deployments</div>
+          <div className="page-sub">Schedule and monitor operational events across the grid.</div>
+        </div>
+        <button className="btn" onClick={()=>setShowForm(s=>!s)}>+ New Deployment</button>
+      </div>
+
+      {showForm && (
+        <div className="card" style={{marginBottom:16}}>
+          <div className="grid grid-2">
+            <div><label>Title</label><input value={form.title} onChange={e=>setForm({...form,title:e.target.value})}/></div>
+            <div><label>Type</label>
+              <select value={form.type} onChange={e=>setForm({...form,type:e.target.value})}>
+                <option>Rally</option><option>Agent Deployment</option><option>Logistics Movement</option>
+              </select>
+            </div>
+            <div><label>Location (constituency)</label>
+              <input list="loc-list2" value={form.location} onChange={e=>setForm({...form,location:e.target.value})}/>
+              <datalist id="loc-list2">{locationOptions.map(l=><option key={l} value={l}/>)}</datalist>
+            </div>
+            <div><label>Date</label><input type="date" value={form.date} onChange={e=>setForm({...form,date:e.target.value})}/></div>
+          </div>
+          <div style={{height:12}}></div>
+          <button className="btn" onClick={()=>{ if(form.title.trim()){ onCreate(form); setForm({title:"",type:"Rally",location:"",date:""}); setShowForm(false);} }}>Schedule</button>
+        </div>
+      )}
+
+      {deployments.length===0 ? <div className="card empty">No deployments scheduled at this time.</div> :
+        <div className="grid grid-2">
+          {deployments.map(d=>(
+            <div className="card" key={d.id}>
+              <div className="flexbetween" style={{marginBottom:6}}>
+                <div style={{fontWeight:700}}>{d.title}</div>
+                <span className="badge badge-confirmed">{d.type}</span>
+              </div>
+              <div style={{fontSize:12.5,color:"var(--muted)"}}>📍 {d.location} &nbsp;·&nbsp; 🗓 {d.date || "TBD"}</div>
+            </div>
+          ))}
+        </div>
+      }
+    </div>
+  );
+}
+
+function LocationsPage({ data, override, onImport, onResetOverride }){
+  const tree = override || data;
+  const [query,setQuery] = useState("");
+  const [expandedC,setExpandedC] = useState({});
+  const [expandedW,setExpandedW] = useState({});
+  const [csvText,setCsvText] = useState("");
+  const [showImport,setShowImport] = useState(false);
+  const [toast,setToast] = useState("");
+
+  const totalConstituencies = tree.flatConstituencies.length;
+  const totalWards = tree.allWards.length;
+  const totalStations = tree.allWards.reduce((s,w)=>s+w.stationCount,0);
+
+  function matches(name){ return !query || name.toLowerCase().includes(query.toLowerCase()); }
+
+  function copyReport(){
+    let lines = ["Province,Constituency,Status,Wards,PollingStations"];
+    tree.flatConstituencies.forEach(c=>{
+      const stations = c.wards.reduce((s,w)=>s+w.stationCount,0);
+      lines.push([c.province,c.name,c.status,c.wardCount,stations].join(","));
+    });
+    const csv = lines.join("\n");
+    navigator.clipboard && navigator.clipboard.writeText(csv).then(()=>setToast("Full constituency report copied to clipboard (CSV)"));
+  }
+
+  return (
+    <div>
+      <div className="page-header">
+        <div className="kicker">Zambia Electoral Geography</div>
+        <div className="page-title">Locations & Field Coverage Report</div>
+        <div className="page-sub">Province → Constituency → Ward → Polling Station, mapped for full field coverage.</div>
+      </div>
+
+      <div className="grid grid-4" style={{marginBottom:16}}>
+        <StatCard num={10} label="Provinces"/>
+        <StatCard num={totalConstituencies} label="Constituencies"/>
+        <StatCard num={totalWards.toLocaleString()} label="Wards"/>
+        <StatCard num={totalStations.toLocaleString()} label="Polling Stations"/>
+      </div>
+
+      <div className="card" style={{marginBottom:16,background:"#16121a",border:"1px solid #4a1620"}}>
+        <b style={{color:"var(--gold)"}}>Data provenance note</b>
+        <div style={{fontSize:12.5,color:"var(--textSoft)",marginTop:6,lineHeight:1.6}}>
+          Constituency names marked <Badge status="confirmed"/> are the real, currently-gazetted names (National Assembly of Zambia). Names marked <Badge status="pending"/> represent the 70 constituencies created in the April 2026 delimitation whose specific boundaries are pending full gazette publication. Ward and polling-station entries are structural placeholders reflecting the official national totals (1,858 wards / 13,529 stations) — use <b>Data Import</b> below to load the authoritative ECZ register and replace placeholders with real names.
+        </div>
+      </div>
+
+      <div className="row" style={{marginBottom:16}}>
+        <input placeholder="Search province or constituency..." value={query} onChange={e=>setQuery(e.target.value)}/>
+        <button className="btn-ghost btn" onClick={copyReport}>⎘ Copy Full Report (CSV)</button>
+        <button className="btn-ghost btn" onClick={()=>setShowImport(s=>!s)}>⇪ Data Import</button>
+        {override && <button className="btn-ghost btn" onClick={onResetOverride}>↺ Reset to Generated Structure</button>}
+      </div>
+
+      {showImport && (
+        <div className="card" style={{marginBottom:16}}>
+          <b>Import official ECZ register</b>
+          <div className="footnote" style={{marginTop:4,marginBottom:10}}>Paste CSV with header: province,constituency,ward,polling_station — one row per polling station. This will replace the placeholder ward/station structure with your authoritative data.</div>
+          <textarea rows="5" value={csvText} onChange={e=>setCsvText(e.target.value)} placeholder={"province,constituency,ward,polling_station\nLusaka,Kabwata,Ward 1,St. Andrews Primary School-01"}/>
+          <div style={{height:10}}></div>
+          <button className="btn" onClick={()=>{ const ok = onImport(csvText); setToast(ok?"Location register imported successfully":"Import failed — check CSV format"); if(ok) setShowImport(false); }}>Import & Replace</button>
+        </div>
+      )}
+
+      <div className="scroll-box" style={{maxHeight:"none"}}>
+        {tree.provinces.map(prov=>{
+          if(!matches(prov.name) && !prov.constituencies.some(c=>matches(c.name))) return null;
+          return (
+            <div key={prov.name} className="card" style={{marginBottom:10}}>
+              <div className="flexbetween">
+                <b>{prov.name} Province</b>
+                <span className="footnote" style={{margin:0}}>{prov.constituencies.length} constituencies</span>
+              </div>
+              <div style={{marginTop:10}}>
+                {prov.constituencies.filter(c=>matches(prov.name)||matches(c.name)).map(c=>(
+                  <div key={c.id}>
+                    <div className="pill" onClick={()=>setExpandedC(p=>({...p,[c.id]:!p[c.id]}))}>
+                      <span>{expandedC[c.id]?"▾":"▸"} {c.name} <Badge status={c.status}/></span>
+                      <span className="footnote" style={{margin:0}}>{c.wardCount} wards</span>
+                    </div>
+                    {expandedC[c.id] && (
+                      <div style={{marginLeft:18,marginTop:6,marginBottom:8}}>
+                        {c.wards.map(w=>(
+                          <div key={w.id}>
+                            <div className="pill" style={{background:"#13131a"}} onClick={()=>setExpandedW(p=>({...p,[w.id]:!p[w.id]}))}>
+                              <span>{expandedW[w.id]?"▾":"▸"} {w.name} <Badge status="placeholder"/></span>
+                              <span className="footnote" style={{margin:0}}>{w.stationCount} stations</span>
+                            </div>
+                            {expandedW[w.id] && (
+                              <div style={{marginLeft:18,marginTop:4,marginBottom:6,fontSize:12,color:"var(--muted)"}}>
+                                {getStationsForWard(w).map(s=>(
+                                  <div key={s.id} style={{padding:"4px 8px"}}>· {s.name} <Badge status="placeholder"/></div>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      {toast && <Toast msg={toast} onClose={()=>setToast("")}/>}
+    </div>
+  );
+}
+
+function About(){
+  return (
+    <div>
+      <div className="page-header">
+        <div className="kicker">About This Demo</div>
+        <div className="page-title">UPND Connect — Platform & Data Sources</div>
+      </div>
+      <div className="card" style={{marginBottom:14}}>
+        <b>What this is</b>
+        <p style={{fontSize:13,color:"var(--textSoft)",lineHeight:1.7}}>
+          A fully interactive demo of UPND Connect: delegate wallets, field operations, empowerment initiatives,
+          party-cause fundraising, delegate &amp; agent vetting, grassroots petitions, field-intelligence signals,
+          rally/deployment scheduling, and a national locations register — all running in your browser.
+        </p>
+      </div>
+      <div className="card" style={{marginBottom:14}}>
+        <b>How it's built</b>
+        <p style={{fontSize:13,color:"var(--textSoft)",lineHeight:1.7}}>
+          Frontend: a single-page React app. Backend: this demo uses Claude's built-in artifact storage as its
+          data layer — every task, donation, application, petition, signal and deployment you create is saved
+          live and shared with anyone viewing this same demo link. There is no separate server to deploy.
+        </p>
+      </div>
+      <div className="card" style={{marginBottom:14}}>
+        <b>Data sources & integrity</b>
+        <p style={{fontSize:13,color:"var(--textSoft)",lineHeight:1.7}}>
+          Election facts (13 August 2026 election day, 226 constituencies, 1,858 wards, 13,529 polling stations,
+          8.8M registered voters) are drawn from the Electoral Commission of Zambia and public reporting as of
+          June 2026. The 156 currently-named constituencies shown are sourced from the National Assembly of
+          Zambia; the additional 70 constituencies created in the April 2026 delimitation are shown as pending
+          placeholders until their official names are gazetted. Ward and polling-station <i>names</i> are not
+          real — they are structural placeholders sized to the correct national totals, clearly marked, with a
+          Data Import tool on the Locations page to load the authoritative ECZ register when available.
+        </p>
+      </div>
+      <div className="card">
+        <b>Demo data note</b>
+        <p style={{fontSize:13,color:"var(--textSoft)",lineHeight:1.7}}>
+          All sample tasks, applications, petitions, signals and donations are illustrative demo content for
+          presentation purposes — not real party records.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+/* ============================= APP ROOT ================================= */
+const NAV = [
+  { key:"dashboard", label:"Dashboard", icon:"◧" },
+  { key:"operations", label:"Field Operations", icon:"☑" },
+  { key:"benefits", label:"Empowerment Initiatives", icon:"🎁" },
+  { key:"donate", label:"Donate", icon:"♥" },
+  { key:"vetting", label:"Delegate Vetting", icon:"🛡" },
+  { key:"petitions", label:"Petitions", icon:"📣" },
+  { key:"signals", label:"Field Signals", icon:"📡" },
+  { key:"deployments", label:"Deployments", icon:"📅" },
+  { key:"locations", label:"Zambia Locations", icon:"📍" },
+  { key:"about", label:"About & Data", icon:"ℹ" },
+];
+
+function App(){
+  const baseLocations = useMemo(()=>buildLocations(),[]);
+  const [locOverride,setLocOverride] = useState(null);
+  const [page,setPage] = useState("dashboard");
+  const [loaded,setLoaded] = useState(false);
+  const [toast,setToast] = useState("");
+
+  const [wallet,setWallet] = useState(0);
+  const [tasks,setTasks] = useState(SEED_TASKS);
+  const [initiatives,setInitiatives] = useState(SEED_INITIATIVES);
+  const [donations,setDonations] = useState([]);
+  const [applications,setApplications] = useState(SEED_APPLICATIONS);
+  const [petitions,setPetitions] = useState(SEED_PETITIONS);
+  const [signals,setSignals] = useState(SEED_SIGNALS);
+  const [deployments,setDeployments] = useState(SEED_DEPLOYMENTS);
+
+  useEffect(()=>{
+    (async()=>{
+      setWallet(await loadKey("upnd_wallet",0));
+      setTasks(await loadKey("upnd_tasks",SEED_TASKS));
+      setInitiatives(await loadKey("upnd_initiatives",SEED_INITIATIVES));
+      setDonations(await loadKey("upnd_donations",[]));
+      setApplications(await loadKey("upnd_applications",SEED_APPLICATIONS));
+      setPetitions(await loadKey("upnd_petitions",SEED_PETITIONS));
+      setSignals(await loadKey("upnd_signals",SEED_SIGNALS));
+      setDeployments(await loadKey("upnd_deployments",SEED_DEPLOYMENTS));
+      setLocOverride(await loadKey("upnd_locations_override",null));
+      setLoaded(true);
+    })();
+  },[]);
+
+  // persist on change (after initial load)
+  useEffect(()=>{ if(loaded) saveKey("upnd_wallet",wallet); },[wallet,loaded]);
+  useEffect(()=>{ if(loaded) saveKey("upnd_tasks",tasks); },[tasks,loaded]);
+  useEffect(()=>{ if(loaded) saveKey("upnd_initiatives",initiatives); },[initiatives,loaded]);
+  useEffect(()=>{ if(loaded) saveKey("upnd_donations",donations); },[donations,loaded]);
+  useEffect(()=>{ if(loaded) saveKey("upnd_applications",applications); },[applications,loaded]);
+  useEffect(()=>{ if(loaded) saveKey("upnd_petitions",petitions); },[petitions,loaded]);
+  useEffect(()=>{ if(loaded) saveKey("upnd_signals",signals); },[signals,loaded]);
+  useEffect(()=>{ if(loaded) saveKey("upnd_deployments",deployments); },[deployments,loaded]);
+
+  const impact = useMemo(()=>({
+    citizens: 12400 + donations.length*37,
+    constituencies: Math.min(226, 34 + donations.length),
+    funded: 48000000 + donations.reduce((s,d)=>s+d.amount,0)
+  }),[donations]);
+
+  const locationOptions = useMemo(()=> baseLocations.flatConstituencies.map(c=>c.name+", "+c.province), [baseLocations]);
+
+  function handleImport(csvText){
+    try{
+      const lines = csvText.trim().split("\n").filter(Boolean);
+      if(lines.length<2) return false;
+      const header = lines[0].toLowerCase();
+      if(!header.includes("province")||!header.includes("constituency")||!header.includes("ward")) return false;
+      const provincesMap = {};
+      for(let i=1;i<lines.length;i++){
+        const parts = lines[i].split(",");
+        if(parts.length<3) continue;
+        const [province,constituency,ward,station] = parts.map(s=>s && s.trim());
+        if(!provincesMap[province]) provincesMap[province] = {};
+        if(!provincesMap[province][constituency]) provincesMap[province][constituency] = {};
+        if(!provincesMap[province][constituency][ward]) provincesMap[province][constituency][ward] = 0;
+        if(station) provincesMap[province][constituency][ward]++;
+      }
+      const provinces = []; let flatConstituencies=[]; let allWards=[];
+      Object.keys(provincesMap).forEach(prov=>{
+        const constituencies = Object.keys(provincesMap[prov]).map((cname,ci)=>{
+          const wardsObj = provincesMap[prov][cname];
+          const wards = Object.keys(wardsObj).map((wname,wi)=>{
+            const w = { id:prov+"-"+cname+"-"+wname, name:wname, stationCount: wardsObj[wname]||1 };
+            allWards.push(w); return w;
+          });
+          const c = { id:prov+"-"+cname, name:cname, province:prov, status:"confirmed", wardCount:wards.length, wards };
+          flatConstituencies.push(c); return c;
+        });
+        provinces.push({ name:prov, constituencies });
+      });
+      const tree = { provinces, flatConstituencies, allWards };
+      setLocOverride(tree);
+      saveKey("upnd_locations_override", tree);
+      return true;
+    }catch(e){ console.error(e); return false; }
+  }
+
+  const counts = {
+    openTasks: tasks.filter(t=>t.status==="open").length,
+    activeInitiatives: initiatives.filter(i=>i.status==="Active Stage").length,
+    pendingApplications: applications.filter(a=>a.status==="pending").length,
+    signalsOpen: signals.filter(s=>s.status!=="Resolved").length
+  };
+
+  return (
+    <div className="app">
+      <div className="sidebar">
+        <div className="brand">
+          <div className="brand-badge">UC</div>
+          <div className="brand-name">UPND <span>CONNECT</span></div>
+        </div>
+        <div className="nav-section-label">Main</div>
+        {NAV.slice(0,1).map(n=>(
+          <div key={n.key} className={"nav-item"+(page===n.key?" active":"")} onClick={()=>setPage(n.key)}>
+            <span className="nav-icon">{n.icon}</span>{n.label}
+          </div>
+        ))}
+        <div className="nav-section-label">Movement</div>
+        {NAV.slice(1,8).map(n=>(
+          <div key={n.key} className={"nav-item"+(page===n.key?" active":"")} onClick={()=>setPage(n.key)}>
+            <span className="nav-icon">{n.icon}</span>{n.label}
+          </div>
+        ))}
+        <div className="nav-section-label">Operations</div>
+        {NAV.slice(8).map(n=>(
+          <div key={n.key} className={"nav-item"+(page===n.key?" active":"")} onClick={()=>setPage(n.key)}>
+            <span className="nav-icon">{n.icon}</span>{n.label}
+          </div>
+        ))}
+        <div className="sidebar-foot">
+          UPND Connect Demo<br/>2026 General Election Build<br/>Data shared across all viewers
+        </div>
+      </div>
+
+      <div className="main">
+        {page==="dashboard" && <Dashboard counts={counts} wallet={wallet}
+          onAddMoney={()=>setWallet(w=>w+500)} onTakeOut={()=>setWallet(w=>Math.max(0,w-200))} />}
+        {page==="operations" && <FieldOperations tasks={tasks}
+          onComplete={(id)=>{ setTasks(ts=>ts.map(t=>t.id===id?{...t,status:"done"}:t)); setToast("Task marked complete"); }} />}
+        {page==="benefits" && <Benefits initiatives={initiatives}
+          onPropose={(f)=>{ setInitiatives(arr=>[...arr,{id:"i"+Date.now(),name:f.name,desc:f.desc,beneficiaries:0,status:"Active Stage",funding:0}]); setToast("Initiative submitted for HQ review"); }} />}
+        {page==="donate" && <Donate donations={donations} impact={impact}
+          onDonate={(amount,message)=>{ setDonations(arr=>[...arr,{id:"d"+Date.now(),amount,message,date:new Date().toISOString()}]); setToast("Thank you — donation recorded (ZMW "+amount.toLocaleString()+")"); }} />}
+        {page==="vetting" && <Vetting applications={applications}
+          onAdd={(f)=>{ setApplications(arr=>[...arr,{id:"a"+Date.now(),...f,status:"pending"}]); setToast("Application submitted for clearance"); }}
+          onSetStatus={(id,status)=>{ setApplications(arr=>arr.map(a=>a.id===id?{...a,status}:a)); setToast("Application "+status); }} />}
+        {page==="petitions" && <Petitions petitions={petitions}
+          onSign={(id)=>{ setPetitions(arr=>arr.map(p=>p.id===id?{...p,signatures:p.signatures+1}:p)); setToast("Signature added"); }}
+          onCreate={(f)=>{ setPetitions(arr=>[...arr,{id:"p"+Date.now(),title:f.title,objective:f.objective,signatures:0,threshold:10000}]); setToast("Petition launched"); }} />}
+        {page==="signals" && <Signals signals={signals} locationOptions={locationOptions}
+          onSubmit={(f)=>{ setSignals(arr=>[...arr,{id:"s"+Date.now(),...f,status:"Submitted",upvotes:0}]); setToast("Signal submitted"); }}
+          onUpvote={(id)=>{ setSignals(arr=>arr.map(s=>s.id===id?{...s,upvotes:s.upvotes+1}:s)); }} />}
+        {page==="deployments" && <Deployments deployments={deployments} locationOptions={locationOptions}
+          onCreate={(f)=>{ setDeployments(arr=>[...arr,{id:"dp"+Date.now(),...f}]); setToast("Deployment scheduled"); }} />}
+        {page==="locations" && <LocationsPage data={baseLocations} override={locOverride}
+          onImport={handleImport}
+          onResetOverride={()=>{ setLocOverride(null); saveKey("upnd_locations_override",null); setToast("Reset to generated structure"); }} />}
+        {page==="about" && <About/>}
+      </div>
+      {toast && <Toast msg={toast} onClose={()=>setToast("")}/>}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>
